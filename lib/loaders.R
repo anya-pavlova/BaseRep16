@@ -1,56 +1,61 @@
+
+###########################################################
+### Loading case and control, alpha ad beta diversity  ###
 ###########################################################
 
-#fam - family
-#g - genus
-#sp - specles
 #otu - operational taxonomic unit 
-library(stringr)
 
-###################################################### 
-## loading case and control                         ##
-######################################################
-
-# To DO: load_project <- function()
-load_project <- function()
+#--- loading case                       
+load_case <- function()
 {  
   # NON-RARIFIED
-  fam <- read_qiime_sum_feats("/home/anna/metagenome/parkinson_diseas/BR_park/data/qiime/MIPT_Tomsk_2015_07_30//otu_table_L5.txt")  
-  g <- read_qiime_sum_feats("/home/anna/metagenome/parkinson_diseas/BR_park/data/qiime/MIPT_Tomsk_2015_07_30//otu_table_L6.txt")
-  sp <- read_qiime_sum_feats("/home/anna/metagenome/parkinson_diseas/BR_park/data/qiime/MIPT_Tomsk_2015_07_30//otu_table_L7.txt")  
-  otu <- read_qiime_otu_table_no_tax("/home/anna/metagenome/parkinson_diseas/BR_park/data/qiime/MIPT_Tomsk_2015_07_30//otu_table_MOD.txt")
+  family_case <- read_qiime_sum_feats (fam_case_otu_table)  
+  genus_case <- read_qiime_sum_feats (g_case_otu_table) 
+  species_case <- read_qiime_sum_feats (sp_case_otu_table)   
+  otu_case <- read_qiime_otu_table_no_tax (otu_case_otu_table) 
     
   # percent OTU
-  otup <- 100 * otu / rowSums(otu)
+  otup_case <- 100 * otu_case / rowSums(otu_case)
   
-  list(sp, g, fam, otu, otup)
+  list(family_case, genus_case, species_case,otu_case, otup_case)
 }
 
+l <- load_case(); family_case <- l[[1]]; genus_case <- l[[2]]; species_case <- l[[3]]; otu_case <- l[[4]]; otup_case <- l[[5]]; rm(l)
+#--- loading control 
 
 load_control <- function()
 {  
   # NON-RARIFIED
-  fam_ctrl <- read_qiime_sum_feats("data/qiime/control_boytsov//otu_table_L5.txt")
-  g_ctrl <- read_qiime_sum_feats("data/qiime/control_boytsov//otu_table_L6.txt")  
-  sp_ctrl <- read_qiime_sum_feats("data/qiime/control_boytsov//otu_table_L7.txt")  
-  otu_ctrl <- read_qiime_otu_table_no_tax("data/qiime/control_boytsov//otu_table_MOD.txt")
+  family_ctrl <- read_qiime_sum_feats (fam_ctrl_otu_table)
+  genus_ctrl <- read_qiime_sum_feats (g_ctrl_otu_table) 
+  species_ctrl <- read_qiime_sum_feats (sp_ctrl_otu_table) 
+  otu_ctrl <- read_qiime_otu_table_no_tax (otu_ctrl_otu_table)
   
   # percent OTU
   otup_ctrl <- 100 * otu_ctrl / rowSums(otu_ctrl)
   
-  list(sp_ctrl, g_ctrl, fam_ctrl, otu_ctrl, otup_ctrl)
+  list(species_ctrl, genus_ctrl, family_ctrl, otu_ctrl, otup_ctrl)
 }
 
-###################################################### 
-## loading case and control alpha diversity         ##
-######################################################
+l1 <- load_control(); family_ctrl <- l1[[1]]; genus_ctrl <- l1[[2]]; species_ctrl <- l1[[3]]; 
+      otu_ctrl <- l1[[4]]; otup_ctrl <- l1[[5]]; rm(l1)
+#---end loading case and control
+
+
+#---preparation metadate
+#meta <- cbind (1:nrow(ff), c(rep("case",length(tags_par)), rep("control",length(tags_ctrl))))
+meta <- cbind (1:nrow(ff), c(rep("case",length(tags_par))))
+nrow(meta)
+
+#---loading case and control alpha diversity      
+
+
 tags_par <-rownames(sp)[-grep("os$|^sp|^park|^15.1|^15.2|^15.3|^19.1|^19.2", rownames(sp))]
 #tags_ctrl <- sort(rownames(sp_ctrl))
 #sp<-sp[tags_par,]
 length(tags_par)
 length(rownames(sp))
-
 length(grep("os$|^sp|^15.1|^15.2|^15.3|^19.1|^19.2", rownames(sp)))
-
 
 
 #sp_all<-unite_feat_matrices(sp,sp_ctrl)
@@ -62,15 +67,14 @@ length(grep("os$|^sp|^15.1|^15.2|^15.3|^19.1|^19.2", rownames(sp)))
 
 load_alpha_rar_case <- function()
 {
-  alpha_case <- read_qiime_single_alpha_rar("data/qiime/MIPT_Tomsk_2015_07_30/alpha_collated/chao1_MOD.txt") 
+  alpha_case <- read_qiime_single_alpha_rar(alpha_div_case) 
   alpha_rar_case <- rbind(alpha_case)
   alpha_rar_case
 }
 
-f <- read.table("/home/anna/metagenome/parkinson_diseas/BR_park/data/qiime/MIPT_Tomsk_2015_07_30/alpha_collated/chao1_MOD.txt", skip=2, header=T, row.names=1,sep="\t", colClasses = "character")
+f <- read.table(alpha_div_case, skip=2, header=T, row.names=1,sep="\t", colClasses = "character")
 
-f <- read.table("/home/anna/metagenome/parkinson_diseas/BR_park/data/qiime/MIPT_Tomsk_2015_07_30/alpha_collated/chao1_MOD.txt",
-               header=T, row.names=1,sep="\t", colClasses = "character",stringsAsFactors=F)
+f <- read.table(alpha_div_case, header=T, row.names=1,sep="\t", colClasses = "character",stringsAsFactors=F)
 f <- t(f)
 f.df <- as.data.frame(f)
 f.df<-as.data.frame(f.df[-c(1:2),])
@@ -79,7 +83,7 @@ rownames(f.df)<-gsub("X","", rownames(f.df))
 colnames(f.df)<-"alpha_diversity"
 f.df$alpha_diversity<-as.numeric(as.character(f.df$alpha_diversity))
 
-write.table(f_d, '/home/anna/metagenome/parkinson_diseas/BR_park/out/alpha_div.txt',quote=F,sep='\t')
+write.table(f_d, '/home/anna/metagenome/BaseRep16/out/alpha_div.txt',quote=F,sep='\t')
 
 mean_alpha <- mean(f.df$alpha_diversity)
 sd_alpha <- sd(f.df$alpha_diversity)
@@ -110,8 +114,6 @@ dev.off()
 
 
 # read data from QIIME
-l <- load_project(); sp <- l[[1]]; g <- l[[2]]; fam <- l[[3]]; otu <- l[[4]]; otup <- l[[5]]; rm(l)
-#l1 <- load_control(); sp_ctrl <- l1[[1]]; g_ctrl <- l1[[2]]; fam_ctrl <- l1[[3]]; otu_ctrl <- l1[[4]]; otup_ctrl <- l1[[5]]; rm(l1)
 
 
 
