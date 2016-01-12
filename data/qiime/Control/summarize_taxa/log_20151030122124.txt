@@ -1,0 +1,40 @@
+Logging started at 12:21:24 on 30 Oct 2015
+QIIME version: 1.7.0
+
+qiime_config values:
+blastmat_dir	/home/qiime/qiime_software/blast-2.2.22-release/data
+sc_queue	all.q
+pynast_template_alignment_fp	/home/qiime/qiime_software/core_set_aligned.fasta.imputed
+cluster_jobs_fp	/home/qiime/qiime_software/qiime-1.7.0-release/bin/start_parallel_jobs.py
+assign_taxonomy_reference_seqs_fp	/home/qiime/qiime_software/gg_otus-12_10-release/rep_set/97_otus.fasta
+torque_queue	friendlyq
+template_alignment_lanemask_fp	/home/qiime/qiime_software/lanemask_in_1s_and_0s
+jobs_to_start	8
+cloud_environment	False
+qiime_scripts_dir	/home/qiime/qiime_software/qiime-1.7.0-release/bin
+denoiser_min_per_core	50
+working_dir	/tmp/
+python_exe_fp	/home/qiime/qiime_software/python-2.7.3-release/bin/python
+temp_dir	/tmp/
+blastall_fp	/home/qiime/qiime_software/blast-2.2.22-release/bin/blastall
+seconds_to_sleep	60
+assign_taxonomy_id_to_taxonomy_fp	/home/qiime/qiime_software/gg_otus-12_10-release/taxonomy/97_otu_taxonomy.txt
+
+parameter file values:
+summarize_taxa:level	2,3,4,5,6,7
+
+Input file md5 sums:
+1/otu/otu_table.biom: 5ede182b7711b22a94d69f50a436f603
+
+Executing commands.
+
+# Summarize Taxonomy command 
+/home/qiime/qiime_software/python-2.7.3-release/bin/python /home/qiime/qiime_software/qiime-1.7.0-release/bin/summarize_taxa.py -i 1/otu/otu_table.biom -o 1/summarize_taxa --level 2,3,4,5,6,7
+
+Stdout:
+
+Stderr:
+
+# Plot Taxonomy Summary command 
+/home/qiime/qiime_software/python-2.7.3-release/bin/python /home/qiime/qiime_software/qiime-1.7.0-release/bin/plot_taxa_summary.py -i 1/summarize_taxa/otu_table_L2.txt,1/summarize_taxa/otu_table_L3.txt,1/summarize_taxa/otu_table_L4.txt,1/summarize_taxa/otu_table_L5.txt,1/summarize_taxa/otu_table_L6.txt,1/summarize_taxa/otu_table_L7.txt -o 1/summarize_taxa/taxa_summary_plots/ 
+

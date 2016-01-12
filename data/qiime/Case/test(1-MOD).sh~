@@ -1,0 +1,12 @@
+#choice directory
+PRE_SEQ_DIR=/home/anna/metagenome/Viliuisk/data/qiime/MIPT_2015_10_08/alpha_collated
+
+#: <<'MYCOMMENT'
+# select the required samples
+#ls -1 $PRE_SEQ_DIR | grep "sequences per sample	iteration" > chao1.txt #.fastq names  
+#cat fastq_names.txt | awk -F'_' '{print $1;}' >samples_names.txt #samples names (to _)
+ls $PRE_SEQ_DIR | sed 's/sequences per sample	iteration//g' > chao_test.txt
+
+#MYCOMMENT
+
+
