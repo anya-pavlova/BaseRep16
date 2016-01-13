@@ -21,8 +21,7 @@ sp_case_otu_table <- (paste(data_case, sp_case_file, sep = "/"))
 otu_case_otu_table <- (paste(data_case, otu_case_file, sep = "/")) 
 
 # case alpha diversity
-alpha_div_case <- "data/qiime/Case/alpha_collated/chao1_MOD.txt"
-
+alpha_div_case <- "data/qiime/Case/alpha_collated/chao1.txt"
 
 
 #---control---

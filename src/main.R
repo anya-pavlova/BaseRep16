@@ -17,6 +17,7 @@ source("lib/functions_special2.R")
 source("lib/loaders.R")
 source("lib/visualization.R")
 source("src/diff_abund.R")
+source("lib/LoadersFunctions.R")
 
 #loading libraries
 library(stringr)
@@ -41,13 +42,6 @@ require(MASS)
 # TODO: read register of all samples and prepare some meta-data variables and files
 #source("src/.R")
 
-#--- write TOP features in .txt file
-#TRA - table of the relative abundance
-WriteTable <- function (TRA, outdir, type)
-{
-  filename<-paste(outdir,"/",type, '.txt', sep="")
-  write.table(TRA, filename, quote=F, sep='\t')
-}
 
 WriteTable (family_case, OutdirCase, "family_case") 
 WriteTable (genus_case, OutdirCase, "genus_case") 

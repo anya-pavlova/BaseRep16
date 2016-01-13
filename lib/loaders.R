@@ -1,11 +1,10 @@
-
 ###########################################################
 ### Loading case and control, alpha ad beta diversity  ###
 ###########################################################
 
 #otu - operational taxonomic unit 
 
-#--- loading case                       
+#---loading case---                       
 load_case <- function()
 {  
   # NON-RARIFIED
@@ -20,9 +19,20 @@ load_case <- function()
   list(family_case, genus_case, species_case,otu_case, otup_case)
 }
 
-l <- load_case(); family_case <- l[[1]]; genus_case <- l[[2]]; species_case <- l[[3]]; otu_case <- l[[4]]; otup_case <- l[[5]]; rm(l)
-#--- loading control 
+LoadOtuTable <- function(FamilyInpdir, GenusInpdir, SpeciesInpdir, OtuIntdir)
+{
+  family_case <- read_qiime_sum_feats (fam_case_otu_table)  
+  genus_case <- read_qiime_sum_feats (g_case_otu_table) 
+  species_case <- read_qiime_sum_feats (sp_case_otu_table)   
+  otu_case <- read_qiime_otu_table_no_tax (otu_case_otu_table) 
+}
 
+
+l <- load_case(); family_case <- l[[1]]; genus_case <- l[[2]]; species_case <- l[[3]]; otu_case <- l[[4]]; otup_case <- l[[5]]; rm(l)
+#---end loading case---
+
+
+#---loading control--- 
 load_control <- function()
 {  
   # NON-RARIFIED
@@ -39,15 +49,46 @@ load_control <- function()
 
 l1 <- load_control(); family_ctrl <- l1[[1]]; genus_ctrl <- l1[[2]]; species_ctrl <- l1[[3]]; 
       otu_ctrl <- l1[[4]]; otup_ctrl <- l1[[5]]; rm(l1)
-#---end loading case and control
+#---end loading case and control---
 
-
-#---preparation metadate
-#meta <- cbind (1:nrow(ff), c(rep("case",length(tags_par)), rep("control",length(tags_ctrl))))
+#---preparation metadate just case
 meta <- cbind (1:nrow(ff), c(rep("case",length(tags_par))))
 nrow(meta)
 
-#---loading case and control alpha diversity      
+#---preparation metadate with control
+meta <- cbind (1:nrow(ff), c(rep("case",length(tags_par)), rep("control",length(tags_ctrl))))
+
+
+#---loading case and control alpha diversity---      
+AlphaDivCase <- LoadAlphaDiv(alpha_div_case)
+
+
+
+
+
+#alpha_control_tbl <- read.table ((alpha_div_case),comment.char = "", quote ="", as.is = T, skip = 2,header = F)
+#alpha_control_tbl <- read.table ("/home/anna/metagenome/BaseRep16/data/qiime/Case/test.txt")
+#alpha_control_tbl
+                                 
+f <- read.table(alpha_div_case, skip=2, header=T, row.names=1,sep="\t", colClasses = "character")
+
+f <- read.table(alpha_div_case, header=T, row.names=1,sep="\t", colClasses = "character",stringsAsFactors=F)
+f <- t(f)
+f.df <- as.data.frame(f)
+f.df<-as.data.frame(f.df[-c(1:2),])
+
+rownames(f.df)<-gsub("X","", rownames(f.df))
+colnames(f.df)<-"alpha_diversity"
+f.df$alpha_diversity<-as.numeric(as.character(f.df$alpha_diversity))
+
+write.table(f_d, '/home/anna/metagenome/BaseRep16/out/alpha_div.txt',quote=F,sep='\t')
+
+mean_alpha <- mean(f.df$alpha_diversity)
+sd_alpha <- sd(f.df$alpha_diversity)
+dev.off()
+
+#-----end alpha diversity-----
+
 
 
 tags_par <-rownames(sp)[-grep("os$|^sp|^park|^15.1|^15.2|^15.3|^19.1|^19.2", rownames(sp))]
@@ -153,7 +194,7 @@ ff_par <- ff_par[, which(colMaxs(ff_par) > 0)]
 #rownames(ff) <- paste(meta_ourn[rownames(ff), "id_timed"],  meta_ourn[rownames(ff), "FIO"], sep=" |") 
 
 # BC dist
-library(ecodist)
+
 dd <- bcdist(ff)
 dd
 #dd.df <- as.data.frame(dd)
@@ -337,7 +378,7 @@ meta <- cbind (1:nrow(ff_par), c(rep("case",length(tags_par))))
 rownames(meta)<-rownames(ff_par)
 ff_top <- chooseTOPfeature(ff,85)
 ff_par_top <- chooseTOPfeature(ff_par,85)
-library(stringr)
+
 #colnames(ff_top)<-str_extract(colnames(ff_top), "(?<=o__).+$")
 colnames(ff_par_top)<-str_extract(colnames(ff_par_top), "(?<=o__).+$")
 ff_par_top<-ff_par_top[,order(colSums(ff_par_top), decreasing = T)]
