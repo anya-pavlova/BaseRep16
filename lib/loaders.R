@@ -4,6 +4,10 @@
 
 #otu - operational taxonomic unit 
 
+#---loading case and control alpha diversity---      
+AlphaDivCase <- LoadAlphaDiv(alpha_div_case)
+#---end loading alpha diversity
+
 #---loading case---                       
 load_case <- function()
 {  
@@ -19,14 +23,19 @@ load_case <- function()
   list(family_case, genus_case, species_case,otu_case, otup_case)
 }
 
+
 LoadOtuTable <- function(FamilyInpdir, GenusInpdir, SpeciesInpdir, OtuIntdir)
 {
-  family_case <- read_qiime_sum_feats (fam_case_otu_table)  
-  genus_case <- read_qiime_sum_feats (g_case_otu_table) 
-  species_case <- read_qiime_sum_feats (sp_case_otu_table)   
-  otu_case <- read_qiime_otu_table_no_tax (otu_case_otu_table) 
+  family <- read_qiime_sum_feats (FamilyInpdir)  
+  genus <- read_qiime_sum_feats (GenusInpdir) 
+  species <- read_qiime_sum_feats (SpeciesInpdir)   
+  otu <- read_qiime_otu_table_no_tax (OtuIntdir) 
+  otup <- 100 * otu / rowSums(otu)
+  l <- list(family, genus, species,otu, otup)  
+  family_case <- l[[1]]; genus_case <- l[[2]]; species_case <- l[[3]]; otu_case <- l[[4]]; otup_case <- l[[5]]; 
 }
 
+LoadOtuTable (fam_case_otu_table, g_case_otu_table, sp_case_otu_table, otu_case_otu_table)
 
 l <- load_case(); family_case <- l[[1]]; genus_case <- l[[2]]; species_case <- l[[3]]; otu_case <- l[[4]]; otup_case <- l[[5]]; rm(l)
 #---end loading case---
@@ -57,38 +66,6 @@ nrow(meta)
 
 #---preparation metadate with control
 meta <- cbind (1:nrow(ff), c(rep("case",length(tags_par)), rep("control",length(tags_ctrl))))
-
-
-#---loading case and control alpha diversity---      
-AlphaDivCase <- LoadAlphaDiv(alpha_div_case)
-
-
-
-
-
-#alpha_control_tbl <- read.table ((alpha_div_case),comment.char = "", quote ="", as.is = T, skip = 2,header = F)
-#alpha_control_tbl <- read.table ("/home/anna/metagenome/BaseRep16/data/qiime/Case/test.txt")
-#alpha_control_tbl
-                                 
-f <- read.table(alpha_div_case, skip=2, header=T, row.names=1,sep="\t", colClasses = "character")
-
-f <- read.table(alpha_div_case, header=T, row.names=1,sep="\t", colClasses = "character",stringsAsFactors=F)
-f <- t(f)
-f.df <- as.data.frame(f)
-f.df<-as.data.frame(f.df[-c(1:2),])
-
-rownames(f.df)<-gsub("X","", rownames(f.df))
-colnames(f.df)<-"alpha_diversity"
-f.df$alpha_diversity<-as.numeric(as.character(f.df$alpha_diversity))
-
-write.table(f_d, '/home/anna/metagenome/BaseRep16/out/alpha_div.txt',quote=F,sep='\t')
-
-mean_alpha <- mean(f.df$alpha_diversity)
-sd_alpha <- sd(f.df$alpha_diversity)
-dev.off()
-
-#-----end alpha diversity-----
-
 
 
 tags_par <-rownames(sp)[-grep("os$|^sp|^park|^15.1|^15.2|^15.3|^19.1|^19.2", rownames(sp))]
