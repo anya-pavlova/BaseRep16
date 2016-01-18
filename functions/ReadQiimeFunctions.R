@@ -32,3 +32,4 @@ read_qiime_single_alpha_rar <- function(filename)
   f[,"chao1"] <- as.numeric(f[,"chao1"])
   f
 }
+

@@ -70,6 +70,26 @@ chooseTOPfeature<-function(dat,perc)
       name_list<-append(name_list, names(sorted[num]))
     }  	
   }	
-  y<-dat[,name_list]
+  y <- dat[,name_list]
+  return(y)
 }
 #-----end chooseTOPfeature-----
+
+###make  distance in Spearman correlation  - for internal use
+####input: feature vectors (table)
+####output: class dist object
+distSpear<-function (x) 
+{
+  result <- 1-cor(t(x), method='spearman', use='pair')
+  as.dist(result)
+}
+#####end
+
+####good colours for heatplot
+cols.gentleman <- function(ncol=500) {
+  library(RColorBrewer)
+  hmcol <- colorRampPalette(brewer.pal(10, 'RdBu'))(ncol)
+  return(rev(hmcol))
+}
+#####end
+

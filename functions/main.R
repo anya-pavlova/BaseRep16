@@ -5,7 +5,7 @@ rm(list=ls(all=TRUE)); gc()
 ################################################
 
 #--- choose your flavor: ---
-cur <- "~/metagenome/ParkinsonAndSklerosis"
+cur <- "~/metagenome/HSN"
 #cur <- ""
 setwd(cur)
 
@@ -43,3 +43,4 @@ library(phyloseq) #source("https://bioconductor.org/biocLite.R"), biocLite("phyl
 library(reshape)
 library(gplots)
 require(MASS)
+
