@@ -2,33 +2,15 @@
 ## working with alpha, beta -diversity                ##
 ########################################################
 
-
-#--- loading case nad control ---
-TotalTable <- Load(FamCaseOtuTbl, GenCaseOtuTbl, SpeCaseOtuTbl, OtuCaseTbl, FamCtrlOtuTbl, GenCtrlOtuTbl, SpeCtrlOtuTbl, OtuCtrlTbl)
-
-FamilyCase <- TotalTable[[1]]
-GenusCase <- TotalTable[[2]]
-SpeciesCase <- TotalTable[[3]]
-OtuCase <- TotalTable[[4]]
-
-FamilyCtrl <- TotalTable[[6]]
-GenusCtrl <- TotalTable[[7]]
-SpeciesCtrl <- TotalTable[[8]]
-OtuCtrl <- TotalTable[[9]]
-#--- end of loading case nad control ---
-
 #--- TOP features ---
 TotalTOPtable <- lapply(TotalTable, chooseTOPfeature, perc = 85)
 
-FamilyTOPcase <- TotalTOPtable[[1]]
-GenusTOPcase <- TotalTOPtable[[2]]
-SpeciesTOPcase <- TotalTOPtable[[3]]
-OtuTOPcase <- TotalTOPtable[[4]]
+FamilyTOP <- chooseTOPfeature(TotalTable$Family[which(rownames(TotalTable$Family)%in%),2] , perc=85)
+GenusTOP <- chooseTOPfeature(TotalTable$Genus , perc=85)
+SpeciesTOP <- chooseTOPfeature(TotalTable$Species , perc=85)
+OtuTOP <- chooseTOPfeature(TotalTable$Otu , perc=85)
 
-FamilyTOPctrl <- TotalTOPtable[[6]]
-GenusTOPctrl <- TotalTOPtable[[7]]
-SpeciesTOPctrl <- TotalTOPtable[[8]]
-OtuTOPctrl <- TotalTOPtable[[9]]
+TotalTable$Meta
 
 
 WriteTable (FamilyCase, OutdirCase, "FamilyCase") 
@@ -70,8 +52,26 @@ WriteTable (SeqStatMeanSd.df, OutdirCase, "SeqStatMeanAndSd")
 #--- end sequencing statistics---
 
 
+
+
 #--- make total matrix case and control (family, genus, species) ---
-#FamilyCaseControl <- UniteMatrices(family,)
-#GenusCaseControl <- UniteMatrices(genus,)
-#SpeciesCaseControl <- UniteMatrices(species,)
-#OtuCaseControl <- UniteMatrices(otu,)
+#FamilyCaseControl <- UniteMatrices(FamilyCase, FamilyCtrl)
+#GenusCaseControl <- UniteMatrices(GenusCase, GenusCtrl)
+#SpeciesCaseControl <- UniteMatrices(SpeciesCase, SpeciesCtrl)
+
+#--- make MDS ---
+
+#Family
+ddHSN<-bcdist(UniteMatrices(FamilyCase, FamilyCtrl))
+MDS(ddHSN, GraphsDir, MetaTable, "Type.1", "Family")
+
+#Genus
+ddHSN<-bcdist(UniteMatrices(GenusCase, GenusCtrl))
+MDS(ddHSN, GraphsDir, MetaTable, "Type.1", "Genus")
+
+#Species
+ddHSN<-bcdist(UniteMatrices(SpeciesCase, SpeciesCtrl))
+MDS(ddHSN, GraphsDir, MetaTable, "Type.1", "Species")
+
+#--- end ---
+

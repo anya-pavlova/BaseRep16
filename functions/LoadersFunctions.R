@@ -12,28 +12,60 @@ LoadAlphaDiv <- function(inpdir)
   AlphaDivTbl <- as.data.frame(AlphaDivTbl[-c(1, 2),])
   rownames(AlphaDivTbl)<-gsub("X","", rownames(AlphaDivTbl))
   colnames(AlphaDivTbl) <- c("AlphaDiversity")
-  return(AlphaDivTbl)
+  return(data.matrix(AlphaDivTbl))
 }
 #---end LoadAlphaDiv---
 
-#---Loading case and control---
-Load <- function(FamInpCase, GenInpCase, SpeInpCase, OtuInpCase, FamInpCtrl, GenInpCtrl, SpeInpCtrl, OtuInpCtrl)
-  #Load <- function(FamInpCase, FamInpCtrl, GenInpCase, GenInpCtrl, SpeInpCase, SpeInpCtrl, OtuInpCase, OtuInpCtrl)
+PathWay <- ReadIni("/home/anna/metagenome/HSN/Patway/Pathway.ini") 
+PathWayCase <- PathWay$Case
+PathWayCtrl <- PathWay$Control
+MetaTable <- read.csv(PathWayCase$MetaCaseCsv)
+
+#---Loading case and control (family, genus, species,otu, meta data, alpha diversity)---
+Load <- function (PatWay.ini)
 {
-  FamilyCase <- read_qiime_sum_feats (FamInpCase)  
-  GenusCase <- read_qiime_sum_feats (GenInpCase) 
-  SpeciesCase <- read_qiime_sum_feats (SpeInpCase)   
-  OtuCase <- read_qiime_otu_table_no_tax (OtuInpCase) 
   
-  FamilyCtrl <- read_qiime_sum_feats (FamInpCtrl)  
-  GenusCtrl <- read_qiime_sum_feats (GenInpCtrl) 
-  SpeciesCtrl <- read_qiime_sum_feats (SpeInpCtrl)   
-  OtuCtrl <- read_qiime_otu_table_no_tax (OtuInpCtrl) 
+  Family <- UniteMatrices(read_qiime_sum_feats (PathWay$Case$FamCaseOtuTbl), read_qiime_sum_feats (PathWay$Ctrl$FamCtrlOtuTbl))
+  Genus <- UniteMatrices(read_qiime_sum_feats (PathWay$Case$GenCaseOtuTbl), read_qiime_sum_feats (PathWay$Ctrl$GenCtrlOtuTbl))
+  Species <- UniteMatrices(read_qiime_sum_feats (PathWay$Case$SpeCaseOtuTbl), read_qiime_sum_feats (PathWay$Ctrl$SpeCtrlOtuTbl))
+  Otu <- UniteMatrices(read_qiime_otu_table_no_tax (PathWay$Case$OtuCaseTbl), read_qiime_otu_table_no_tax (PathWay$Ctrl$OtuCtrlTbl))
+  AlphaDiv <- UniteMatrices(LoadAlphaDiv(PathWay$Case$AlphaDivCase), LoadAlphaDiv(PathWay$Ctrl$AlphaDivCtrl))
   
   # percent OTU
-  OtupCase <- 100 * OtuCase / rowSums(OtuCase)
-  OtupCtrl <- 100 * OtuCtrl / rowSums(OtuCtrl)
+  Otup <- 100 * Otu / rowSums(Otu)
   
-  list(FamilyCase, GenusCase, SpeciesCase, OtuCase, OtupCase ,FamilyCtrl, GenusCtrl, SpeciesCtrl, OtuCtrl, OtupCtrl)
+  ######### insert load alpha diversity as vector in list
+  # load meta data
+  MetaTable <- rbind(read.csv(PathWay$Case$MetaCaseCsv), read.csv(PathWay$Ctrl$MetaCtrlCsv))
+  
+  list(Family=Family, Genus=Genus, Species=Species, Otu=Otu, Otup=Otup, Meta=MetaTable, AlphaDiv=AlphaDiv)
 }
+
+
+#--- loading case and control ---
+# передавать вектор с путями в правильном (заданном) порядке в функцию, чтобы не ошибаться в порядке перечисления
+TotalTable <- Load (PathWay)
+#--- end loading case and control ---
+
+
+
+###########################################################
+### Loading case and control, alpha ad beta diversity  ###
+###########################################################
+
+
+
+
+
+##### check rowSums=100%
+#rowSums(TotalTable$Family)
+
+##### check rownames matching for all tables and metadata
+#setdiff(rownames(FamilyCtrl), MetaCtrl$samples_name)
+#setdiff(rownames(GenusCtrl), MetaCtrl$samples_name)
+#setdiff(rownames(SpeciesCtrl), MetaCtrl$samples_name)
+
+#rownames(TotalTable$Family)
+
+
 

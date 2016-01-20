@@ -5,7 +5,7 @@
 #-----make MDS (2D)-----
 #-input: distance matrix, output directory, meta matrix,  
 #-output: MDS plot
-MDS<-function(dis, outdir,meta, colFact,plot_name,m_width = 5, m_height=5)
+MDS<-function(dis, outdir, meta, colFact, plot_name,m_width = 5, m_height=5)
 {   
   myMDS <- isoMDS(dis, k=2)
   outdirMDS<-paste(outdir,'/MDS_',plot_name,'.pdf',sep='')
@@ -16,23 +16,14 @@ MDS<-function(dis, outdir,meta, colFact,plot_name,m_width = 5, m_height=5)
 }
 #-----end MDS-----
 
+########### test
+MDS(ddHSN, "/home/anna/metagenome/HSN/Graphs", MetaTable, "Type.1", "case")
+dis<-ddHSN
+myMDS <- isoMDS(dis, k=2)
+dfMDS <- data.frame(X = as.vector(myMDS$points[,1]), Y = as.vector(myMDS$points[,2]),cols = MetaTable[,2], lab = rownames(myMDS$points))
+plotMDS <- ggplot(dfMDS, aes(x=X, y=Y, color=factor(cols), label=lab)) + geom_point(size=0.3) + geom_text(size=2) + theme_bw()  
 
-#-----UniteMatrices-----
-#-input: two matrix  
-#-output: united matrix
-UniteMatrices <- function(t1, t2)
-{
-  uc <- sort(union(colnames(t1), colnames(t2)))
-  ur <- c(rownames(t1), rownames(t2))
-  t <- matrix(0, nrow = nrow(t1) + nrow(t2), ncol = length(uc))
-  colnames(t) <- uc
-  rownames(t) <- ur
-  t[rownames(t1), colnames(t1)] <- t1
-  t[rownames(t2), colnames(t2)] <- t2
-  identical(t1, t[rownames(t1), colnames(t1)])
-  identical(t2, t[rownames(t2), colnames(t2)])
-  t
-}
+
 
 #ToDo: должна проверять совпадения в именах, поиск общих элементов в матрицах, стерать элементы в 1й которые есть во 2й и их добавлять
 

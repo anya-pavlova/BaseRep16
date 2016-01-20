@@ -2,6 +2,10 @@
 ## configuration data                             ###
 #####################################################
 
+#--- general graphs directory ---
+
+GraphsDir <- "/home/anna/metagenome/HSN/Graphs"
+
 #--- case ---
 DataCase <- "/home/anna/metagenome/HSN/data/qiime/Case"
 
@@ -21,14 +25,17 @@ SpeCaseOtuTbl <- (paste(DataCase, SpeCaseFile, sep = "/"))
 OtuCaseTbl <- (paste(DataCase, OtuCaseFile, sep = "/")) 
 
 # case alpha diversity
-alpha_div_case <- "data/qiime/Case/alpha_collated/chao1.txt"
+AlphaDivCase <- "data/qiime/Case/alpha_collated/chao1.txt"
+
+#case meta data
+MetaCaseCsv <- "/home/anna/metagenome/HSN/MetaDataCase.csv"
 
 #---control---
 DataControl <- "/home/anna/metagenome/HSN/data/qiime/Control"
 
 #output control directory 
 
-OutdirControl <- "/home/anna/metagenome/HSN/out"
+OutdirControl <- "/home/anna/metagenome/HSN/out/Control"
 
 # control fam, g, sp, otu files
 FamCtrlFile <- "otu_table_L5.txt"
@@ -43,10 +50,40 @@ SpeCtrlOtuTbl <- (paste(DataControl, SpeCtrlFile, sep = "/"))
 OtuCtrlTbl <- (paste(DataControl, OtuCtrlFile, sep = "/")) 
 
 # control alpha diversity
-alpha_div_ctrl <- "data/qiime/Control/alpha_collated/chao1_MOD.txt"
+AlphaDivCtrl <- "data/qiime/Case/alpha_collated/chao1.txt"
+
+#control meta data
+MetaCtrlCsv <- "/home/anna/metagenome/HSN/MetaDataCtrl.csv"
 
 #---sequencing statistics---
 SeqStatTblFile <- "/home/anna/metagenome/HSN/StatTable.txt"
 
+ReadIni <- function(IniFilename) 
+{ 
+  connection <- file(IniFilename) 
+  Lines  <- readLines(connection) 
+  close(connection) 
+  
+  Lines <- chartr("[]", "==", Lines)  # change section headers 
+  
+  connection <- textConnection(Lines) 
+  d <- read.table(connection, as.is = TRUE, sep = "=", fill = TRUE) 
+  close(connection) 
+  
+  L <- d$V1 == ""                    # location of section breaks 
+  d <- subset(transform(d, V3 = V2[which(L)[cumsum(L)]])[1:3], 
+              V1 != "") 
+  
+  ToParse  <- paste("INI.list$", d$V3, "$",  d$V1, " <- '", 
+                    d$V2, "'", sep="") 
+  
+  INI.list <- list() 
+  eval(parse(text=ToParse)) 
+  
+  return(INI.list) 
+} 
 
 
+PathWay <- ReadIni("/home/anna/metagenome/HSN/Patway/Pathway.ini") 
+
+Family <- read_qiime_sum_feats (PathWay$Case$FamCaseOtuTbl)

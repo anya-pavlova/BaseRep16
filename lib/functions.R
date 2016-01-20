@@ -57,7 +57,7 @@ distSpear<-function (x)
   result <- 1-cor(t(x), method='spearman', use='pair')
   as.dist(result)
 }
-#####end
+#####edn
 
 ####good colours for heatplot
 cols.gentleman <- function(ncol=500) {
