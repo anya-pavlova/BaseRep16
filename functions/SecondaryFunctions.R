@@ -16,28 +16,18 @@ MDS<-function(dis, outdir, meta, colFact, plot_name,m_width = 5, m_height=5)
 }
 #-----end MDS-----
 
-########### test
-MDS(ddHSN, "/home/anna/metagenome/HSN/Graphs", MetaTable, "Type.1", "case")
-dis<-ddHSN
-myMDS <- isoMDS(dis, k=2)
-dfMDS <- data.frame(X = as.vector(myMDS$points[,1]), Y = as.vector(myMDS$points[,2]),cols = MetaTable[,2], lab = rownames(myMDS$points))
-plotMDS <- ggplot(dfMDS, aes(x=X, y=Y, color=factor(cols), label=lab)) + geom_point(size=0.3) + geom_text(size=2) + theme_bw()  
-
-
 
 #ToDo: должна проверять совпадения в именах, поиск общих элементов в матрицах, стерать элементы в 1й которые есть во 2й и их добавлять
-
 #-----WriteTable: write TOP features in .txt file-----
 #TRA - table of the relative abundance
-WriteTable <- function (TRA, outdir, type)
+WriteTable <- function (SomeStructure, outdir, type)
 {
   filename<-paste(outdir,"/",type, '.txt', sep="")
-  write.table(TRA, filename, quote=F, sep='\t')
+  write.table(SomeStructure, filename, quote=F, sep='\t')
 }
-
+#-----end WriteTable: write something in .txt file-----
 
 #-----chooseTOPfeature-----
-
 #-choose top features with total % of abundance across all samples
 #-input: feature vectors (table), percantage
 #-output: table with chosen features

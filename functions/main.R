@@ -10,8 +10,6 @@ cur <- "~/metagenome/HSN"
 setwd(cur)
 
 source("functions/FirstFunctions.R")
-source("functions/ReadQiimeFunctions.R")
-source("functions/ConfigProject.R")
 source("functions/LoadersFunctions.R")
 source("functions/WorkingField.R")
 source("functions/SecondaryFunctions.R")

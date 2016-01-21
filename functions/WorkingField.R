@@ -3,15 +3,35 @@
 ########################################################
 
 #--- TOP features ---
-TotalTOPtable <- lapply(TotalTable, chooseTOPfeature, perc = 85)
+#FamGenSpeList <- list (TotalTable$Family, TotalTable$Genus, TotalTable$Species)
+
+TopFeatures <- function(FeatList)
+{
+  TopFeatures <- lapply(FamGenSpeList, chooseTOPfeature, perc = 85)
+  
+}
+
+FamGenSpeListTOP <- TopFeatures(FamGenSpeList)
+Family <- as.data.frame(FamGenSpeListTOP)
+
+TopFeatures <- function (TotalTable, type, subset, perc)
+{
+  FamilyTOP <- chooseTOPfeature(TotalTable$Family[which(rownames(TotalTable$Family)%in%TotalTable$Meta[which(TotalTable$Meta[,type]%in%subset),"samples_name"]),], perc=perc)
+  GenusTOP <- chooseTOPfeature(TotalTable$Genus[which(rownames(TotalTable$Genus)%in%TotalTable$Meta[which(TotalTable$Meta[,type]%in%subset),"samples_name"]),], perc=perc)
+  SpeciesTOP<-chooseTOPfeature(TotalTable$Species[which(rownames(TotalTable$Species)%in%TotalTable$Meta[which(TotalTable$Meta[,type]%in%subset),"samples_name"]),], perc=perc)
+  OtuTOP <- chooseTOPfeature(TotalTable$Otu[which(rownames(TotalTable$Otu)%in%TotalTable$Meta[which(TotalTable$Meta[,type]%in%subset),"samples_name"]),], perc=perc)
+
+
+  list(FamilyTOP = FamilyTOP, GenusTOP = GenusTOP, SpeciesTOP = SpeciesTOP, OtuTOP = OtuTOP)
+}
+
+TableTOP<-TopFeatures(TotalTable, type= "Type.1", subset="case", perc=85)
+
 
 FamilyTOP <- chooseTOPfeature(TotalTable$Family[which(rownames(TotalTable$Family)%in%),2] , perc=85)
 GenusTOP <- chooseTOPfeature(TotalTable$Genus , perc=85)
 SpeciesTOP <- chooseTOPfeature(TotalTable$Species , perc=85)
 OtuTOP <- chooseTOPfeature(TotalTable$Otu , perc=85)
-
-TotalTable$Meta
-
 
 WriteTable (FamilyCase, OutdirCase, "FamilyCase") 
 WriteTable (GenusCase, OutdirCase, "GenusCase") 
@@ -20,8 +40,10 @@ WriteTable (OtuCase, OutdirCase, "OtuCase")
 #--- end write TOP features in .txt file ---
 
 #--- working with alpha diversity ---
-AlphaDivCase <- LoadAlphaDiv(alpha_div_case)
-WriteTable (AlphaDivCase, OutdirCase, "AlphaDivTbld") 
+                                  
+AlphaDivCase <- (TotalTable$AlphaDiv[which(rownames(TotalTable$AlphaDiv)%in%TotalTable$Meta[which(TotalTable$Meta[,"Type.1"]%in%"case"),"samples_name"]),])]
+               
+WriteTable( AlphaDivCase, PathWay$Case$OutdirCase, "AlphaDivCaseTbl"))
 
 AlphaDivCaseL <- as.list(AlphaDivCase)
 AlphaDivMean <- lapply(AlphaDivCaseL[match('AlphaDiversity', names(AlphaDivCaseL))], mean)
@@ -62,16 +84,16 @@ WriteTable (SeqStatMeanSd.df, OutdirCase, "SeqStatMeanAndSd")
 #--- make MDS ---
 
 #Family
-ddHSN<-bcdist(UniteMatrices(FamilyCase, FamilyCtrl))
-MDS(ddHSN, GraphsDir, MetaTable, "Type.1", "Family")
+ddHSN<-bcdist(TotalTable$Family)
+MDS(ddHSN, PathWay$Case$GraphsDir, PathWay$Case$MetaTable, "Type.1", "Family")
 
 #Genus
-ddHSN<-bcdist(UniteMatrices(GenusCase, GenusCtrl))
-MDS(ddHSN, GraphsDir, MetaTable, "Type.1", "Genus")
+ddHSN<-bcdist(UniteMatrices(TotalTable$Genus, GenusCtrl))
+MDS(ddHSN, PathWay$Case$GraphsDir, PathWay$Case$MetaTable, "Type.1", "Genus")
 
 #Species
 ddHSN<-bcdist(UniteMatrices(SpeciesCase, SpeciesCtrl))
-MDS(ddHSN, GraphsDir, MetaTable, "Type.1", "Species")
+MDS(ddHSN, PathWay$Case$GraphsDir , TotalTable$MetaTable, "Type.1", "Species")
 
 #--- end ---
 

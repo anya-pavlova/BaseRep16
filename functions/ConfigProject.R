@@ -58,32 +58,5 @@ MetaCtrlCsv <- "/home/anna/metagenome/HSN/MetaDataCtrl.csv"
 #---sequencing statistics---
 SeqStatTblFile <- "/home/anna/metagenome/HSN/StatTable.txt"
 
-ReadIni <- function(IniFilename) 
-{ 
-  connection <- file(IniFilename) 
-  Lines  <- readLines(connection) 
-  close(connection) 
-  
-  Lines <- chartr("[]", "==", Lines)  # change section headers 
-  
-  connection <- textConnection(Lines) 
-  d <- read.table(connection, as.is = TRUE, sep = "=", fill = TRUE) 
-  close(connection) 
-  
-  L <- d$V1 == ""                    # location of section breaks 
-  d <- subset(transform(d, V3 = V2[which(L)[cumsum(L)]])[1:3], 
-              V1 != "") 
-  
-  ToParse  <- paste("INI.list$", d$V3, "$",  d$V1, " <- '", 
-                    d$V2, "'", sep="") 
-  
-  INI.list <- list() 
-  eval(parse(text=ToParse)) 
-  
-  return(INI.list) 
-} 
 
 
-PathWay <- ReadIni("/home/anna/metagenome/HSN/Patway/Pathway.ini") 
-
-Family <- read_qiime_sum_feats (PathWay$Case$FamCaseOtuTbl)

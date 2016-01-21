@@ -2,27 +2,12 @@
 ## Loading functions                                  ##
 ########################################################
 
-
-#---LoadAlphaDiv: loading alpha diversity---
-LoadAlphaDiv <- function(inpdir)
-{
-  inpdir
-  AlphaDivTbl <- (read.table (inpdir,row.names=1,  header=T,sep="\t",stringsAsFactors=F ))
-  AlphaDivTbl <- t(AlphaDivTbl)
-  AlphaDivTbl <- as.data.frame(AlphaDivTbl[-c(1, 2),])
-  rownames(AlphaDivTbl)<-gsub("X","", rownames(AlphaDivTbl))
-  colnames(AlphaDivTbl) <- c("AlphaDiversity")
-  return(data.matrix(AlphaDivTbl))
-}
-#---end LoadAlphaDiv---
-
+#--- Load pathway ---
 PathWay <- ReadIni("/home/anna/metagenome/HSN/Patway/Pathway.ini") 
-PathWayCase <- PathWay$Case
-PathWayCtrl <- PathWay$Control
-MetaTable <- read.csv(PathWayCase$MetaCaseCsv)
+#--- end loading pathway ---
 
 #---Loading case and control (family, genus, species,otu, meta data, alpha diversity)---
-Load <- function (PatWay.ini)
+Load <- function (PathWay)
 {
   
   Family <- UniteMatrices(read_qiime_sum_feats (PathWay$Case$FamCaseOtuTbl), read_qiime_sum_feats (PathWay$Ctrl$FamCtrlOtuTbl))
@@ -36,24 +21,15 @@ Load <- function (PatWay.ini)
   
   ######### insert load alpha diversity as vector in list
   # load meta data
-  MetaTable <- rbind(read.csv(PathWay$Case$MetaCaseCsv), read.csv(PathWay$Ctrl$MetaCtrlCsv))
+  MetaTable <- rbind(read.csv(PathWay$Case$MetaCaseCsv, stringsAsFactors=F), read.csv(PathWay$Ctrl$MetaCtrlCsv, stringsAsFactors=F))
   
   list(Family=Family, Genus=Genus, Species=Species, Otu=Otu, Otup=Otup, Meta=MetaTable, AlphaDiv=AlphaDiv)
 }
+#--- end loading case and control (family, genus, species,otu, meta data, alpha diversity)---
 
-
-#--- loading case and control ---
-# передавать вектор с путями в правильном (заданном) порядке в функцию, чтобы не ошибаться в порядке перечисления
+#--- loading case, control, meta data, alpha diversity ---
 TotalTable <- Load (PathWay)
 #--- end loading case and control ---
-
-
-
-###########################################################
-### Loading case and control, alpha ad beta diversity  ###
-###########################################################
-
-
 
 
 
