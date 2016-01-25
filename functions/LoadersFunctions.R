@@ -1,34 +1,30 @@
 ########################################################
 ## Loading functions                                  ##
 ########################################################
+library(futile.logger)
 
-#--- Load pathway ---
-PathWay <- ReadIni("Patway/Pathway.ini") 
-#--- end loading pathway ---
-family <- as.data.frame(PathWay$Case$FamCaseOtuTbl)
-
-#---Loading case and control (family, genus, species,otu, meta data, alpha diversity)---
-Load <- function(PathWay)
+# Loading case and control
+Load <- function(pathway)
 {
-  
-  Family <- UniteMatrices(read_qiime_sum_feats(PathWay$Case$FamCaseOtuTbl), read_qiime_sum_feats (PathWay$Ctrl$FamCtrlOtuTbl))
-  Genus <- UniteMatrices(read_qiime_sum_feats (PathWay$Case$GenCaseOtuTbl), read_qiime_sum_feats (PathWay$Ctrl$GenCtrlOtuTbl))
-  Species <- UniteMatrices(read_qiime_sum_feats (PathWay$Case$SpeCaseOtuTbl), read_qiime_sum_feats (PathWay$Ctrl$SpeCtrlOtuTbl))
-  Otu <- UniteMatrices(read_qiime_otu_table_no_tax (PathWay$Case$OtuCaseTbl), read_qiime_otu_table_no_tax (PathWay$Ctrl$OtuCtrlTbl))
-  AlphaDiv <- UniteMatrices(LoadAlphaDiv(PathWay$Case$AlphaDivCase), LoadAlphaDiv(PathWay$Ctrl$AlphaDivCtrl))
+  flog.info("start load table")
+  family <- UniteMatrices(read_qiime_sum_feats(pathway$Case$FamCaseOtuTbl), read_qiime_sum_feats (pathway$Ctrl$FamCtrlOtuTbl))
+  genus <- UniteMatrices(read_qiime_sum_feats (pathway$Case$GenCaseOtuTbl), read_qiime_sum_feats (pathway$Ctrl$GenCtrlOtuTbl))
+  species <- UniteMatrices(read_qiime_sum_feats (pathway$Case$SpeCaseOtuTbl), read_qiime_sum_feats (pathway$Ctrl$SpeCtrlOtuTbl))
+  otu <- UniteMatrices(read_qiime_otu_table_no_tax (pathway$Case$OtuCaseTbl), read_qiime_otu_table_no_tax (pathway$Ctrl$OtuCtrlTbl))
+  alphaDiv <- UniteMatrices(LoadAlphaDiv(pathway$Case$AlphaDivCase), LoadAlphaDiv(pathway$Ctrl$AlphaDivCtrl))
   
   # percent OTU
-  Otup <- 100 * Otu / rowSums(Otu)
+  otup <- 100 * otu / rowSums(otu)
   
   ######### insert load alpha diversity as vector in list
   # load meta data
-  MetaTable <- rbind(read.csv(PathWay$Case$MetaCaseCsv, stringsAsFactors=F), read.csv(PathWay$Ctrl$MetaCtrlCsv, stringsAsFactors=F))
+  metaTable <- rbind(read.csv(pathway$Case$MetaCaseCsv, stringsAsFactors=F), read.csv(pathway$Ctrl$MetaCtrlCsv, stringsAsFactors=F))
 
+  flog.info("finished load table")
   #TODO(Anna) create checking ...
-  
-  list(Family=Family, Genus=Genus, Species=Species, Otu=Otu, Otup=Otup, Meta=MetaTable, AlphaDiv=AlphaDiv)
+  list(family=family, genus=genus, species=species, otu=otu, otup=otup, meta=metaTable, alphaDiv=alphaDiv)
 }
-#--- end loading case and control (family, genus, species,otu, meta data, alpha diversity)---
+#--- end loading case and control ---
 
 
 
@@ -36,14 +32,14 @@ Load <- function(PathWay)
 
 
 ##### check rowSums=100%
-#rowSums(TotalTable$Family)
+#rowSums(TotalTable$family)
 
 ##### check rownames matching for all tables and metadata
 #setdiff(rownames(FamilyCtrl), MetaCtrl$samples_name)
 #setdiff(rownames(GenusCtrl), MetaCtrl$samples_name)
 #setdiff(rownames(SpeciesCtrl), MetaCtrl$samples_name)
 
-#rownames(TotalTable$Family)
+#rownames(TotalTable$family)
 
 
 

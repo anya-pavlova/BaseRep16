@@ -20,6 +20,7 @@ UniteMatrices <- function(t1, t2)
 }
 #--- end UniteMatrices ---
 
+
 #--- ReadIni ---
 #-input: .ini file 
 #-output: list
@@ -48,15 +49,6 @@ ReadIni <- function(IniFilename)
   return(INI.list) 
 } 
 #--- end ReadIni ---
-
-#-----WriteTable: write TOP features in .txt file-----
-#TRA - table of the relative abundance
-WriteTable <- function (TRA, outdir, type)
-{
-  filename<-paste(outdir,"/",type, '.txt', sep="")
-  write.table(TRA, filename, quote=F, sep='\t')
-}
-#--- end WriteTable ---
 
 #---LoadAlphaDiv: loading alpha diversity---
 LoadAlphaDiv <- function(inpdir)
@@ -113,27 +105,39 @@ read_qiime_single_alpha_rar <- function(filename)
 #-choose top features with total % of abundance across all samples
 #-input: feature vectors (table), percantage
 #-output: table with chosen features
-chooseTOPfeature<-function(dat,perc)
+chooseTOPfeature<-function(data,perc)
 {
-  summof<-sum(colSums(dat))
-  sorted<-sort(colSums(dat), decreasing = TRUE)
+  summof<-sum(colSums(data))
+  sorted<-sort(colSums(data), decreasing = TRUE)
   count <-0
   num<-0
   name_list<-c()  
   for (i in sorted) #in sorted by total abundance features, take those making %
   {
-    count<-count+((i/summof)*100)
-    num <-num+1
-    if (count>perc) 
+    count <- count+((i/summof)*100)
+    num <- num+1
+    if (count > perc) 
     {
       break
     }
     else 
     {
-      name_list<-append(name_list, names(sorted[num]))
+      name_list <- append(name_list, names(sorted[num]))
     }    
   }	
-  y <- dat[,name_list]
+  y <- data[,name_list]
   return(y)
 }
 #--- end chooseTOPfeature ---
+
+
+TopFeatures <- function(totalTable, type, subset, perc)
+{
+  FamilyTOP <- chooseTOPfeature(totalTable$family[which(rownames(totalTable$family) %in% totalTable$meta[which(totalTable$meta[,type] %in% subset),"samples_name"]),], perc=perc)
+  GenusTOP <- chooseTOPfeature(totalTable$genus[which(rownames(totalTable$genus) %in% totalTable$meta[which(totalTable$meta[,type] %in% subset),"samples_name"]),], perc=perc)
+  SpeciesTOP <- chooseTOPfeature(totalTable$species[which(rownames(totalTable$species) %in% totalTable$meta[which(totalTable$meta[,type] %in% subset),"samples_name"]),], perc=perc)
+  OtuTOP <- chooseTOPfeature(totalTable$otu[which(rownames(totalTable$otu) %in% totalTable$meta[which(totalTable$meta[,type] %in% subset),"samples_name"]),], perc=perc)
+  
+  
+  list(familyTOP = FamilyTOP, genusTOP = GenusTOP, speciesTOP = SpeciesTOP, otuTOP = OtuTOP)
+}
