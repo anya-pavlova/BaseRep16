@@ -5,9 +5,9 @@ rm(list=ls(all=TRUE)); gc()
 ################################################
 
 #--- choose your flavor: ---
-cur <- "~/metagenome/HSN"
-#cur <- ""
-setwd(cur)
+current_directory <- "~/metagenome/HSN"
+#current_directory <- ""
+setwd(current_directory)
 
 source("functions/FirstFunctions.R")
 source("functions/LoadersFunctions.R")

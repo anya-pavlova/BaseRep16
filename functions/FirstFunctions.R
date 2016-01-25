@@ -1,6 +1,6 @@
-########################################################
-## UniteMatrices, ReadIni, LoadAlphaDiv, read_qiime functions       ##
-########################################################
+################################################################
+## UniteMatrices, ReadIni, LoadAlphaDiv, read_qiime functions ##
+################################################################
 
 #--- UniteMatrices ---
 #-input: two matrix  
@@ -62,7 +62,8 @@ WriteTable <- function (TRA, outdir, type)
 LoadAlphaDiv <- function(inpdir)
 {
   inpdir
-  AlphaDivTbl <- (read.table (inpdir,row.names=1,  header=T,sep="\t",stringsAsFactors=F ))
+  AlphaDivTbl <- (read.table (inpdir, row.names=1,  header=T,sep="\t",
+                              stringsAsFactors=F ))
   AlphaDivTbl <- t(AlphaDivTbl)
   AlphaDivTbl <- as.data.frame(AlphaDivTbl[-c(1, 2),])
   rownames(AlphaDivTbl)<-gsub("X","", rownames(AlphaDivTbl))
@@ -94,7 +95,8 @@ read_qiime_otu_table_no_tax <- function(filename)
 
 read_qiime_single_alpha_rar <- function(filename)
 {   
-  f <- read.table(filename, header=T, row.names=1, sep="\t", colClasses = "character")
+  f <- read.table(filename, header=T, row.names=1, sep="\t", 
+                  colClasses = "character")
   f <- f[,-c(1,2)]
   colnames(f) <- gsub("X", "", colnames(f))
   f <- t(f)

@@ -2,50 +2,47 @@
 ## working with alpha, beta -diversity                ##
 ########################################################
 
-#--- TOP features ---
+#--- loading case, control, meta data, alpha diversity ---
+TotalTable <- Load(PathWay)
+#--- end loading case and control ---
+
+#--- TOP features for case and control features ---
 #FamGenSpeList <- list (TotalTable$Family, TotalTable$Genus, TotalTable$Species)
 
-TopFeatures <- function(FeatList)
+TopFeatures <- function(TotalTable, type, subset, perc)
 {
-  TopFeatures <- lapply(FamGenSpeList, chooseTOPfeature, perc = 85)
-  
-}
-
-FamGenSpeListTOP <- TopFeatures(FamGenSpeList)
-Family <- as.data.frame(FamGenSpeListTOP)
-
-TopFeatures <- function (TotalTable, type, subset, perc)
-{
-  FamilyTOP <- chooseTOPfeature(TotalTable$Family[which(rownames(TotalTable$Family)%in%TotalTable$Meta[which(TotalTable$Meta[,type]%in%subset),"samples_name"]),], perc=perc)
-  GenusTOP <- chooseTOPfeature(TotalTable$Genus[which(rownames(TotalTable$Genus)%in%TotalTable$Meta[which(TotalTable$Meta[,type]%in%subset),"samples_name"]),], perc=perc)
-  SpeciesTOP<-chooseTOPfeature(TotalTable$Species[which(rownames(TotalTable$Species)%in%TotalTable$Meta[which(TotalTable$Meta[,type]%in%subset),"samples_name"]),], perc=perc)
-  OtuTOP <- chooseTOPfeature(TotalTable$Otu[which(rownames(TotalTable$Otu)%in%TotalTable$Meta[which(TotalTable$Meta[,type]%in%subset),"samples_name"]),], perc=perc)
+  FamilyTOP <- chooseTOPfeature(TotalTable$Family[which(rownames(TotalTable$Family) %in% TotalTable$Meta[which(TotalTable$Meta[,type] %in% subset),"samples_name"]),], perc=perc)
+  GenusTOP <- chooseTOPfeature(TotalTable$Genus[which(rownames(TotalTable$Genus) %in% TotalTable$Meta[which(TotalTable$Meta[,type] %in% subset),"samples_name"]),], perc=perc)
+  SpeciesTOP<-chooseTOPfeature(TotalTable$Species[which(rownames(TotalTable$Species) %in% TotalTable$Meta[which(TotalTable$Meta[,type] %in% subset),"samples_name"]),], perc=perc)
+  OtuTOP <- chooseTOPfeature(TotalTable$Otu[which(rownames(TotalTable$Otu) %in% TotalTable$Meta[which(TotalTable$Meta[,type] %in% subset),"samples_name"]),], perc=perc)
 
 
   list(FamilyTOP = FamilyTOP, GenusTOP = GenusTOP, SpeciesTOP = SpeciesTOP, OtuTOP = OtuTOP)
 }
 
-TableTOP<-TopFeatures(TotalTable, type= "Type.1", subset="case", perc=85)
+TableTOP <- list(TopFeatures(TotalTable, type = "Type.1", subset = "case", perc = 85), 
+                 TopFeatures(TotalTable, type = "Type.1", subset = "control", perc = 85))
 
+#TableTOP<-TopFeatures(TotalTable, type= "Type.1", subset="case", perc=85)
+#FamilyTOP <- chooseTOPfeature(TotalTable$Family[which(rownames(TotalTable$Family)%in%),2] , perc=85)
+#GenusTOP <- chooseTOPfeature(TotalTable$Genus , perc=85)
+#SpeciesTOP <- chooseTOPfeature(TotalTable$Species , perc=85)
+#OtuTOP <- chooseTOPfeature(TotalTable$Otu , perc=85)
 
-FamilyTOP <- chooseTOPfeature(TotalTable$Family[which(rownames(TotalTable$Family)%in%),2] , perc=85)
-GenusTOP <- chooseTOPfeature(TotalTable$Genus , perc=85)
-SpeciesTOP <- chooseTOPfeature(TotalTable$Species , perc=85)
-OtuTOP <- chooseTOPfeature(TotalTable$Otu , perc=85)
+WriteTable
 
-WriteTable (FamilyCase, OutdirCase, "FamilyCase") 
-WriteTable (GenusCase, OutdirCase, "GenusCase") 
-WriteTable (SpeciesCase, OutdirCase, "SpeciesCase") 
-WriteTable (OtuCase, OutdirCase, "OtuCase") 
+WriteTable(FamilyCase, OutdirCase, "FamilyCase") 
+WriteTable(GenusCase, OutdirCase, "GenusCase") 
+WriteTable(SpeciesCase, OutdirCase, "SpeciesCase") 
+WriteTable(OtuCase, OutdirCase, "OtuCase") 
 #--- end write TOP features in .txt file ---
 
 #--- working with alpha diversity ---
-                                  
+#case
 AlphaDivCase <- (TotalTable$AlphaDiv[which(rownames(TotalTable$AlphaDiv)%in%TotalTable$Meta[which(TotalTable$Meta[,"Type.1"]%in%"case"),"samples_name"]),])]
                
-WriteTable( AlphaDivCase, PathWay$Case$OutdirCase, "AlphaDivCaseTbl"))
-
-AlphaDivCaseL <- as.list(AlphaDivCase)
+WriteTable(AlphaDivCase, PathWay$Case$OutdirCase, "AlphaDivCaseTbl"))
+#AlphaDivCaseL <- as.list(AlphaDivCase)
 AlphaDivMean <- lapply(AlphaDivCaseL[match('AlphaDiversity', names(AlphaDivCaseL))], mean)
 AlphaDivSd <- lapply(AlphaDivCaseL[match('AlphaDiversity', names(AlphaDivCaseL))], sd)
 AlphaDivMeanSd <- c(AlphaDivMean, AlphaDivSd)
@@ -56,6 +53,10 @@ WriteTable (AlphaDivMeanSd, OutdirCase, "AlphaDivMeanAndSd")
 cairo_pdf((paste(OutdirCase, '/Graphs/alpha_boxplot.pdf', sep = "/")), width = 10,  height = 10)
 boxplot(AlphaDivCase$AlphaDiversity)
 dev.off()
+
+#control
+AlphaDivCase <- (TotalTable$AlphaDiv[which(rownames(TotalTable$AlphaDiv)%in%TotalTable$Meta[which(TotalTable$Meta[,"Type.1"]%in%"control"),"samples_name"]),])]
+
 #---  working with alpha diversity ---
 
 
