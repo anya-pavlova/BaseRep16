@@ -1,0 +1,47 @@
+[group.one]
+# general graphs directory 
+GraphsDir=/home/anna/metagenome/BaseRep16/figures
+
+DataCase=/home/anna/metagenome/BaseRep16/data/qiime/Case
+
+# output case directory 
+outdir=/home/anna/metagenome/BaseRep16/out
+
+# case fam, g, sp, otu tables
+fam.group.one.otu.tbl=/home/anna/metagenome/BaseRep16/data/qiime/Case/otu_table_L5.txt
+gen.group.one.otu.tbl=/home/anna/metagenome/BaseRep16/data/qiime/Case/otu_table_L6.txt
+spe.group.one.otu.tbl=/home/anna/metagenome/BaseRep16/data/qiime/Case/otu_table_L7.txt
+otu.group.one.tbl=/home/anna/metagenome/BaseRep16/data/qiime/Case/otu_table_MOD.txt
+
+# case alpha diversity
+alpha.div.group.one=/home/anna/metagenome/BaseRep16/data/qiime/Case/alpha_collated/chao1.txt
+
+#case meta data
+meta.group.one.csv=/home/anna/metagenome/BaseRep16/src/meta.data.case.csv
+
+[group.two]
+# general graphs directory 
+GraphsDir=/home/anna/metagenome/BaseRep16/figures
+
+DataControl=/home/anna/metagenome/BaseRep16/data/qiime/Control
+
+#output control directory 
+outdir=/home/anna/metagenome/BaseRep16/out
+
+# control fam, g, sp, otu tables
+fam.group.tow.otu.tbl=/home/anna/metagenome/BaseRep16/data/qiime/Control/otu_table_L5.txt
+gen.group.tow.otu.tbl=/home/anna/metagenome/BaseRep16/data/qiime/Control/otu_table_L6.txt
+spe.group.tow.otu.tbl=/home/anna/metagenome/BaseRep16/data/qiime/Control/otu_table_L7.txt
+otu.group.tow.tbl=/home/anna/metagenome/BaseRep16/data/qiime/Control/otu_table_MOD.txt
+
+# control alpha diversity
+alpha.div.group.tow=/home/anna/metagenome/BaseRep16/data/qiime/Case/alpha_collated/chao1.txt
+
+meta.group.tow.csv=/home/anna/metagenome/BaseRep16/src/meta.data.ctrl.csv
+
+[statistics]
+
+#---sequencing statistics---
+SeqStatTblFile=/home/anna/metagenome/BaseRep16/StatTable.txt
+
+
